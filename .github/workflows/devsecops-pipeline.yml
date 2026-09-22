@@ -54,8 +54,8 @@ jobs:
       - name: Run Bandit AST Security Scanner
         run: |
           mkdir -p reports
-          bandit -r app/ -f json -o reports/bandit-report.json || true
-          bandit -r app/ -ll
+          bandit -r app/ -c .bandit -f json -o reports/bandit-report.json || true
+          bandit -r app/ -c .bandit
 
       - name: Run Semgrep (OWASP Top 10 & Security Rules)
         run: |

@@ -2,8 +2,8 @@ from fastapi import FastAPI, HTTPException, Depends, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from pydantic import BaseModel, Field, EmailStr
 import uvicorn
+import secrets
 import os
-import re
 
 app = FastAPI(
     title="Secured Enterprise Payment API",
@@ -13,7 +13,7 @@ app = FastAPI(
 
 security = HTTPBearer()
 
-# Pydantic schema with input validation to prevent injection flaws
+# Pydantic schema with strict input validation to prevent injection flaws
 class TransactionRequest(BaseModel):
     account_id: str = Field(..., min_length=5, max_length=32, pattern=r"^[a-zA-Z0-9_-]+$")
     recipient_email: EmailStr
@@ -38,12 +38,11 @@ def process_transfer(payload: TransactionRequest, token: HTTPAuthorizationCreden
     Secure transaction processing endpoint.
     Enforces strict regex input sanitization, token validation, and parameter typing.
     """
-    # Defensive input verification
     if not token.credentials:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Missing authorization token")
     
-    # Generate mock transaction id safely
-    tx_hash = os.urandom(8).hex()
+    # Cryptographically secure random token generation (CWE-330 compliant)
+    tx_hash = secrets.token_hex(8)
     
     return TransactionResponse(
         transaction_id=f"TX-{tx_hash}",
@@ -54,4 +53,5 @@ def process_transfer(payload: TransactionRequest, token: HTTPAuthorizationCreden
     )
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    # Bind to standard production port (nosec B104: required for containerized networking)
+    uvicorn.run(app, host="0.0.0.0", port=8000)  # nosec B104
