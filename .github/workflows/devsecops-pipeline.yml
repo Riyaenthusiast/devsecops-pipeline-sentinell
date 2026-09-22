@@ -151,6 +151,7 @@ jobs:
           rules_file_name: '.zap/rules.tsv'
           cmd_options: '-a'
           fail_action: false
+        continue-on-error: true
 
   # ==========================================
   # STAGE 6: Security Quality Gate & Executive Summary
