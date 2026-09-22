@@ -1,3 +1,0 @@
-[bandit]
-exclude = /venv,/tests,/.git
-skips = B104

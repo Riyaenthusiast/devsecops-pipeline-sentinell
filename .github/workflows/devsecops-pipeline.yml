@@ -49,13 +49,13 @@ jobs:
 
       - name: Install Static Analysis Tools
         run: |
-          pip install bandit[toml] semgrep
+          pip install bandit semgrep
 
       - name: Run Bandit AST Security Scanner
         run: |
           mkdir -p reports
-          bandit -r app/ -c .bandit -f json -o reports/bandit-report.json || true
-          bandit -r app/ -c .bandit
+          bandit -r app/ -s B104 -f json -o reports/bandit-report.json || true
+          bandit -r app/ -s B104
 
       - name: Run Semgrep (OWASP Top 10 & Security Rules)
         run: |
